@@ -12,6 +12,7 @@ def intialPass():
         # skip empty lines and comments
         parser2.advance()
         if parser2.findCommandType()=="A_COMMAND" or parser2.findCommandType()=="C_COMMAND" :
+            print(parser2.command,commandCounter)
             commandCounter+=1
         elif "(" in parser2.command and ")" in parser2.command:
             # remove the () from label

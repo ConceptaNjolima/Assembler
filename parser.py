@@ -16,28 +16,52 @@ class Parser():
         # check THIS~!
         previousLine=""
         try:
-            nextLine = self.file.next()
             # check for comments is broken
-            while "//" in nextLine  or nextLine=="\r\n":
+            while "//" in self.command or self.command=="\r\n":
+                print(self.command.strip())
                 # skip comments
-                previousLine=nextLine
-                nextLine=self.file.next()
+                previousLine=self.command
+
+                # commandIndex=nextLine.strip().index("//")
+                # print(commandIndex)
+                # # if comment is at start of line
+                # if commandIndex==0:
+                #     nextLine=self.file.next()
+                #     print("left out", previousLine)
+                # else:
+                #     self.command=nextLine[0:commandIndex]
+                #     break
+                self.command = self.file.next()
                 print("left out", previousLine)
-            self.command=nextLine
-            if nextLine:
-                # print("hasMorecommand= ", True)
-                return True
+                print("current command", self.command)
+                if "//" in self.command:
+                    commandIndex = self.command.index("//")
+                    if commandIndex==0:
+                        continue
+                    else:
+                        commandLeft=self.command.strip()
+                        print("comment index",commandIndex)
+                        self.command=self.command.strip()[0:commandIndex]
+                        return True
+                else:
+                    # self.command = self.file.next()
+                    return True
+            # return True
+            # self.command=nextLine
+            # if self.command:
+            #     # print("hasMorecommand= ", True)
+            # return True
             # except StopIteration:
             #     return
         except:
             return False
 
     def advance(self):
-        line=self.command
+        # line=self.command
         if self.hasMoreCommands():
-            nextCommand=line
-            print("command",nextCommand)
-            return nextCommand.strip()
+            # nextCommand=line
+            print("command",self.command)
+            return self.command.strip()
         else:
             print("closing file")
             self.file.close()

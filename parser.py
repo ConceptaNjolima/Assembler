@@ -59,6 +59,7 @@ class Parser():
 
     def advance(self):
         # line=self.command
+        self.removeComment()
         if self.hasMoreCommands():
             # nextCommand=line
             # print("advanced command",self.command)
@@ -77,11 +78,12 @@ class Parser():
 
     def symbol(self):
         """Returns symbols or decimal of current symbol"""
-        print("in symbol",self.command)
+        # print("in symbol",self.command)
         if self.findCommandType()=="A_COMMAND":
-            symbol=self.command[1:]
-            print("in symbol",symbol.strip())
-            return symbol.strip()
+            symbol=self.command.strip().replace("@","")
+            print("in symbol",symbol,symbol.isdigit())
+            if symbol.isdigit()==False:
+                return symbol.strip()
         elif self.findCommandType()=="L_COMMAND":
             # remove opening bracket
             symbol=self.command.strip("(")

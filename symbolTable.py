@@ -4,6 +4,7 @@ class symbolTable():
         for i in range(16):
             self.symbolTable["R"+str(i)]=i
         print(self.symbolTable)
+
     def addEntry(self,symbol,address):
         """Adds the symbol and address to table"""
         self.symbolTable[symbol]=address

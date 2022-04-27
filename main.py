@@ -13,10 +13,14 @@ def checkOutputs(filePath1,filePath2):
     # To ask: Why are these not equal?
     with open(filePath1) as file_1, open(filePath2) as file_2:
         differ = Differ()
-        # print(file_1.readlines())
-        # print(file_2.readlines())
+        # print(len(file_1.readlines()))
+        # print(len(file_2.readlines()))
+        commandLine=0
         for line in differ.compare(file_1.readlines(), file_2.readlines()):
             print(line)
+            commandLine+=1
+            print(commandLine)
+
 
 
 

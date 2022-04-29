@@ -13,68 +13,30 @@ class Parser():
         self.futureCommand=""
         self.aBit="0"
     def hasMoreCommands(self):
-        """Checks if input has more commands"""
-        # try:
-        #     # self.futureCommand=self.file.next()
-        #     # print("comment",self.command,"future:",self.futureCommand)
-        #     # print(self.comment.strip().find("/"))
-        #     # self.command = self.futureCommand.strip()
-        #     # print("no comment",self.command)
-        #     # return True
-        #     commandIndex=self.command.strip().find("/")
-        #     print("start command:",self.command)
-        #     while commandIndex<=0:
-        #         # Move to next line
-        #         print("comment or empty line found:",self.command,"index",commandIndex,"future:",self.futureCommand)
-        #         self.command=self.futureCommand.strip()
-        #         self.futureCommand = self.file.next()
-        #         commandIndex=self.command.strip().find("/")
-        #     if commandIndex>0:
-        #         print("command not comment:",self.command,"index",commandIndex)
-        #         self.command=self.command[:commandIndex]
-        #         self.futureCommand=self.futureCommand[:commandIndex]
-        #         print("future comment with comment removed",self.command)
-        #     # print("command",commandIndex,"future:",self.futureCommand)
-        #     return  True
-        # except:
-        #     print("exception raised")
-        #     return False
-
-        previousLine=""
+        """
+        Check if input file has more commands
+        :return: Bollean
+        """
         try:
-            # check for comments is broken
+            # get the next command
             self.futureCommand = self.file.next()
             self.command=self.command.strip()
-            # print("command at start",self.command)
             while "//" in self.command or self.command=="" or self.command=="\r\n":
-                # previousLine=self.command
-                # print("comment", self.command, "future:", self.futureCommand)
+                # if current command is an empty line
                 if self.command=="" or self.command=="\r\n":
-                    print("empty line found")
-                    # self.futureCommand = self.file.next()
                     self.command = self.futureCommand
                     self.futureCommand = self.file.next()
                     continue
                 else:
                     commandIndex = self.command.strip().index("//")
-                    print("comment index", commandIndex)
+                    # if the comment sign is at the start, then the entire line is skipped
                     if commandIndex==0:
-                        print("left out", self.command.strip())
                         self.command=self.futureCommand
                         self.futureCommand = self.file.next()
                     else:
-                        commandLeft=self.command.strip()
-                        print("command left",commandLeft[0:commandIndex])
+                        # Get command after removing comment
                         self.command=self.command.strip()[0:commandIndex]
-                        # self.futureCommand = self.file.next()
                         return True
-                # else:
-                #     # Is empty line
-                #     self.command = self.futureCommand
-                #     return True
-            # self.futureCommand = self.file.next()
-            # print(" outside while: comment", self.command, "future:", self.futureCommand)
-            # print("outside while")
             return True
         except:
             return False
@@ -84,18 +46,16 @@ class Parser():
         Check if the file has more commands.
         :return: command: string
         """
-        # line=self.command
         self.removeComment()
         if self.hasMoreCommands():
-            print("advanced command",self.command)
             return self.command.strip()
         else:
-            print("closing file")
+            # Close file if it does not have more commands
             self.file.close()
             return self.futureCommand.strip()
     def findCommandType(self):
         """
-        Determines if the command is A, C or L command
+        Determine if the command is A, C or L command
         :return: string
         """
         if "@" in self.command:
@@ -106,11 +66,13 @@ class Parser():
             return "L_COMMAND"
 
     def symbol(self):
-        """Returns symbols or decimal of current symbol"""
+        """
+        Remove all identifiers of A or L commands
+        :return: string: symbol that is stripped of any identifiers like @ or ()
+        """
         if self.findCommandType()=="A_COMMAND":
             symbol=self.command.strip().replace("@","")
-            # print("in symbol",symbol,symbol.isdigit())
-            # if the A command is a constant
+            # if a command is to a constant
             if symbol.isdigit()==False:
                 return symbol.strip()
         elif self.findCommandType()=="L_COMMAND":
@@ -121,6 +83,7 @@ class Parser():
             return symbol
         else:
             return
+
     def dest(self):
         """
         Assign the values for the destination bits from the command
@@ -139,7 +102,6 @@ class Parser():
                 comp_list = self.command.strip().split("=")
             else:
                 comp_list=self.command.strip().split(";")
-            # print(comp_list)
             return destinationDictionary[comp_list[0]]
         else:
             return destinationDictionary['null']
@@ -188,8 +150,7 @@ class Parser():
         # 'D-1': '001110',
         if self.findCommandType()=="C_COMMAND" and "=" in self.command:
             comp_list=self.command.strip().split("=")
-            # print(comp_list)
-            # if a=1
+
             if "A" in comp_list[1] or comp_list[1] in specialCase:
                 self.aBit="0"
                 return (aIsFalse[comp_list[1]])
@@ -202,7 +163,6 @@ class Parser():
             # For jump commands
             comp_list = self.command.split(";")
             self.aBit="0"
-            print(comp_list)
             return aIsFalse[comp_list[0]]
 
     def jump(self):
@@ -220,11 +180,14 @@ class Parser():
                           "JMP": "111"}
         if self.findCommandType() == "C_COMMAND" and ";" in self.command:
             comp_list = self.command.strip().split(";")
-            # print(comp_list)
             return jumpDictionary[comp_list[1]]
         else:
             return jumpDictionary['null']
     def removeComment(self):
+        """
+        Remove comment from command
+        :return: none
+        """
         if "//" in self.command:
             commandIndex = self.command.index("//")
             self.command = self.command.strip()[0:commandIndex].replace(" ","")
